@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <form method="POST" action="./" id="form1">
+                    <div class="mb-3">
+                        <label for="inputUser" class="form-label">User</label>
+                        <input type="text" class="form-control" id="inputUser" name="user" value="username"
+                            aria-describedby="emailHelp">
+                        <div id="emailHelp" class="form-text">We'll never share your user with anyone else.</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="inputPw" class="form-label">Password</label>
+                        <input type="password" class="form-control" id="inputPw" value="password" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Entrar</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+        integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+        crossorigin="anonymous"></script>
+
+    <script>
+        function setCookie(name, value, seconds) {
+            var expires = "";
+            if (seconds) {
+                var date = new Date();
+                date.setTime(date.getTime() + (seconds * 1000));
+                expires = "; expires=" + date.toUTCString();
+            }
+            document.cookie = name + "=" + (value || "") + expires + "; path=" + window.location.pathname;
+            console.log(name, value, seconds);
+            console.log(document.cookie);
+        }
+        document.querySelector("#form1").addEventListener("submit", evt => {
+            evt.preventDefault();
+            const user = evt.target.user.value;
+            const password = evt.target.password.value;
+            setCookie('systemMessage', "{\"title\": \"Message\", \"subTitle\": \"System\", \"body\": \"Login Realizado Com Sucesso\"}", 5);
+            //evt.currentTarget.submit();
+            initToast();
+        });
+        function getCookie(name) {
+            const value = `; ${document.cookie}`;
+            const parts = value.split(`; ${name}=`);
+            if (parts.length === 2) return parts.pop().split(';').shift();
+        }
+        const toast1 = (title = "", subTitle = "", body = "", identify = "") => {
+            let str = `
+            <div class="toast-container position-absolute top-0 end-0 p-3">
+            <div class="toast toast_${identify}" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="toast-header">
+            <strong class="me-auto">${title}</strong>
+            <small class="text-muted">${subTitle}</small>
+            <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+            <div class="toast-body">${body}</div>
+            </div>
+            </div>
+            `;
+            let element = document.createElement("div");
+            element.classList.add("position-relative");
+            element.setAttribute("id", "toastTemp_" + identify);
+            element.setAttribute("aria-live", "polite");
+            element.setAttribute("aria-atomic", "true");
+            element.innerHTML = str;
+            document.body.insertBefore(element, document.body.firstChild);
+        }
+
+        const initToast = () => {
+            const message = decodeURIComponent(getCookie("systemMessage"));
+            if (message != null && message != "undefined" && message != undefined) {
+                const randomString = (Math.random() + 1).toString(36).substring(7);
+                const messageObj = JSON.parse(message);
+                toast1(messageObj.title, messageObj.subTitle, messageObj.body, randomString);
+                const toastEl = document.querySelector('.toast_' + randomString);
+                const option = {
+                    animation: true,
+                    autohide: true,
+                    delay: 4500
+                };
+                toastEl.addEventListener('hidden.bs.toast', function () {
+                    if (document.querySelector("#toastTemp_" + randomString)) {
+                        document.querySelector("#toastTemp_" + randomString).remove();
+                    }
+                });
+                const toast = new bootstrap.Toast(toastEl, option)
+                toast.show();
+                document.cookie = `systemMessage=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+            }
+        }
+
+        window.onload = () => {
+            initToast();
+        }
+    </script>
+</body>
+
+</html>
