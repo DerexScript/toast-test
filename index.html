@@ -45,8 +45,6 @@
                 expires = "; expires=" + date.toUTCString();
             }
             document.cookie = name + "=" + (value || "") + expires + "; path=" + window.location.pathname;
-            console.log(name, value, seconds);
-            console.log(document.cookie);
         }
         document.querySelector("#form1").addEventListener("submit", evt => {
             evt.preventDefault();
