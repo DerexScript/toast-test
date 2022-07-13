@@ -100,7 +100,7 @@
                 });
                 const toast = new bootstrap.Toast(toastEl, option)
                 toast.show();
-                document.cookie = `systemMessage=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;`;
+                document.cookie = `systemMessage=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=${window.location.pathname};`;
             }
         }
 
